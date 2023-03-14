@@ -19,7 +19,10 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
+import java.util.List;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -28,8 +31,8 @@ import com.google.gson.JsonObject;
 
 public class FarmKG extends Artifact {
 
-    private static final String USERNAME = "danai";
-    private static final String PASSWORD = "was";
+    private static final String USERNAME = "was-students";
+    private static final String PASSWORD = "knowledge-representation-is-fun";
 
     private String repoLocation;
 
@@ -51,8 +54,12 @@ public class FarmKG extends Artifact {
         String farmVariableName = "farm";
 
         // constructs query
-        String queryStr = PREFIXES + "SELECT ?farm WHERE { ?" + farmVariableName + " a was:Farm. }";
-
+        String queryStr = PREFIXES + "SELECT ?farm WHERE {\n" +
+                "GRAPH <https://sandbox-graphdb.interactions.ics.unisg.ch/was-exercise-3-florence#> {\n" +
+                "   bind (<https://sandbox-graphdb.interactions.ics.unisg.ch/was-exercise-3-florence#"+ "farm-1" +"> as ?farm)\n" +
+                "   ?farm a was:Farm.\n" +
+                "   }\n" +
+                "}";
         /* Example SPARQL query 
          * PREFIX was: <https://was-course.interactions.ics.unisg.ch/farm-ontology#>
          * PREFIX hmas: <https://purl.org/hmas/>
@@ -133,8 +140,42 @@ public class FarmKG extends Artifact {
     @OPERATION
     public void queryFarmSections(String farm, OpFeedbackParam<Object[]> sections) {
         // the variable where we will store the result to be returned to the agent
+        String tdValue = null;
+
+        // the variable where we will store the result to be returned to the agent
         Object[] sectionsValue = new Object[]{ "fakeSection1", "fakeSection2", "fakeSection3", "fakeSection4" };
 
+        // sets your variable name for the farm to be queried
+        String tdVariableName = "LandSection";
+
+        // constructs query
+        String queryStr = PREFIXES + "SELECT ?LandSection WHERE {\n" +
+                "GRAPH <https://sandbox-graphdb.interactions.ics.unisg.ch/was-exercise-3-florence#> {\n" +
+                "   bind (<"+farm+"> as ?farm)\n" +
+                "   ?farm a was:Farm.\n" +
+                "   ?farm hmas:contains ?LandSection.\n" +
+                "   ?LandSection a was:LandSection. \n" +
+                " }\n" +
+                "}";
+
+        // executes query
+        JsonArray tdBindings = executeQuery(queryStr);
+
+        /* Example JSON result
+         * [{"td":
+         *  {
+         *   "type":"uri",
+         *   "value":"https://raw.githubusercontent.com/Interactions-HSG/example-tds/was/tds/tractor1.ttl"
+         *  }
+         * }]
+         */
+
+        // handles result as JSON object
+        for(int i = 0; i < tdBindings.size(); i++) {
+            JsonObject jsonElement = tdBindings.get(i).getAsJsonObject();
+            JsonObject tdBinding = jsonElement.getAsJsonObject("LandSection");
+            sectionsValue[i] = (tdBinding.getAsJsonPrimitive("value").getAsString());
+        }
         // sets the value of interest to the OpFeedbackParam
         sections.set(sectionsValue);
     }
@@ -144,14 +185,75 @@ public class FarmKG extends Artifact {
         // the variable where we will store the result to be returned to the agent
         Object[] coordinatesValue = new Object[]{ 0, 0, 1, 1 };
 
+        // constructs query
+        String queryStr = PREFIXES + "SELECT ?coordinates WHERE {\n" +
+                "GRAPH <https://sandbox-graphdb.interactions.ics.unisg.ch/was-exercise-3-florence#> {\n" +
+                "   bind (<"+ section +"> as ?LandSection)\n" +
+                "   ?LandSection a was:LandSection. \n" +
+                "   ?LandSection hmas:contains ?Coordinates.\n" +
+                "   ?Coordinates td:hasCoordinates ?coordinates\n" +
+                " }\n" +
+                "}";
+
+        // executes query
+        JsonArray farmBindings = executeQuery(queryStr);
+
+        JsonObject firstBinding = farmBindings.get(0).getAsJsonObject();
+
+        JsonObject tdBinding = firstBinding.getAsJsonObject("coordinates");
+        final var tdValue = tdBinding.getAsJsonPrimitive("value").getAsString();
+        String[] split = tdValue.split(",");
+
         // sets the value of interest to the OpFeedbackParam
-        coordinates.set(coordinatesValue);
+        Object[] t = Arrays.stream(split).map(Integer::parseInt).toArray();
+        coordinates.set(t);
     }
 
     @OPERATION 
     public void queryCropOfSection(String section, OpFeedbackParam<String> crop) {
         // the variable where we will store the result to be returned to the agent
         String cropValue = "fakeCrop";
+
+        // the variable where we will store the result to be returned to the agent
+        String tdValue = null;
+
+        // sets your variable name for the farm to be queried
+        String tdVariableName = "td";
+
+        // constructs query
+        String queryStr = PREFIXES + "SELECT ?" + tdVariableName + " WHERE {\n" +
+                "bind(" + "<" + section + "> as ?section)\n" +
+                "?section hmas:contains ?Crop." +
+                "?Crop a was:Crop.\n}";
+
+        /* Example SPARQL query
+         * PREFIX was: <https://was-course.interactions.ics.unisg.ch/farm-ontology#>
+         * PREFIX hmas: <https://purl.org/hmas/>
+         * PREFIX td: <https://www.w3.org/2019/wot/td#>
+         * SELECT ?td WHERE {
+         *   <https://sandbox-graphdb.interactions.ics.unisg.ch/was-exercise-3-danai#farm-17c04810-567a-4236-b310-611bb4fd2a8c> hmas:contains ?thing.
+         *   ?thing td:hasActionAffordance ?aff.
+         *   ?thing hmas:hasProfile ?td.
+         *   ?aff a <https://was-course.interactions.ics.unisg.ch/farm-ontology#ReadSoilMoistureAffordance>.
+         * } LIMIT 1
+         */
+
+        // executes query
+        JsonArray tdBindings = executeQuery(queryStr);
+
+        /* Example JSON result
+         * [{"td":
+         *  {
+         *   "type":"uri",
+         *   "value":"https://raw.githubusercontent.com/Interactions-HSG/example-tds/was/tds/tractor1.ttl"
+         *  }
+         * }]
+         */
+
+        // handles result as JSON object
+        JsonObject firstBinding = tdBindings.get(0).getAsJsonObject();
+        JsonObject tdBinding = firstBinding.getAsJsonObject(tdVariableName);
+        cropValue = tdBinding.getAsJsonPrimitive("value").getAsString();
 
         // sets the value of interest to the OpFeedbackParam
         crop.set(cropValue);
@@ -161,6 +263,34 @@ public class FarmKG extends Artifact {
     public void queryRequiredMoisture(String crop, OpFeedbackParam<Integer> level) {
         // the variable where we will store the result to be returned to the agent
         Integer moistureLevelValue = 120;
+
+        // the variable where we will store the result to be returned to the agent
+        String cropValue = "fakeCrop";
+
+        // sets your variable name for the farm to be queried
+        String tdVariableName = "td";
+
+        // constructs query
+        String queryStr = PREFIXES + "SELECT ?moisture" + tdVariableName + " WHERE {\n" +
+                "bind(" + "<" + crop + "> as ?crop)\n" +
+                "?crop td:hasrequiredMoisture ?moisture}";
+
+        // executes query
+        JsonArray tdBindings = executeQuery(queryStr);
+
+        /* Example JSON result
+         * [{"td":
+         *  {
+         *   "type":"uri",
+         *   "value":"https://raw.githubusercontent.com/Interactions-HSG/example-tds/was/tds/tractor1.ttl"
+         *  }
+         * }]
+         */
+
+        // handles result as JSON object
+        JsonObject firstBinding = tdBindings.getAsJsonObject();
+        JsonObject tdBinding = firstBinding.getAsJsonObject(tdVariableName);
+        moistureLevelValue = tdBinding.getAsJsonPrimitive("value").getAsInt();
 
         // sets the value of interest to the OpFeedbackParam
         level.set(moistureLevelValue);

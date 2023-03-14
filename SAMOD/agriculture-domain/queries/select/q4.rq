@@ -1,0 +1,12 @@
+PREFIX was: <https://was-course.interactions.ics.unisg.ch/farm-ontology#>
+PREFIX hmas: <https://purl.org/hmas/>
+PREFIX td: <https://www.w3.org/2019/wot/td#>
+
+SELECT ?LandSection WHERE {
+GRAPH <https://sandbox-graphdb.interactions.ics.unisg.ch/was-exercise-3-florence#> {
+   bind (<https://sandbox-graphdb.interactions.ics.unisg.ch/was-exercise-3-florence#farm-1> as ?farm)
+   ?farm a was:Farm.
+   ?farm hmas:contains ?LandSection.
+   ?LandSection a was:LandSection.
+ }
+}

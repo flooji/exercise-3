@@ -270,30 +270,25 @@ public class FarmKG extends Artifact {
         // sets your variable name for the farm to be queried
         String tdVariableName = "td";
 
-        // constructs query
-        String queryStr = PREFIXES + "SELECT ?moisture" + tdVariableName + " WHERE {\n" +
-                "bind(" + "<" + crop + "> as ?crop)\n" +
-                "?crop td:hasrequiredMoisture ?moisture}";
+        String queryStr = PREFIXES + "SELECT ?moisture WHERE {\n" +
+                "GRAPH <https://sandbox-graphdb.interactions.ics.unisg.ch/was-exercise-3-luka#> {\n" +
+                "   bind (<"+crop+"> as ?crop)\n" +
+                "   ?crop td:hasrequiredMoisture ?moisture. \n" +
+                " }\n" +
+                "}";
 
-        // executes query
-        JsonArray tdBindings = executeQuery(queryStr);
+        JsonArray farmBindings = executeQuery(queryStr);
 
-        /* Example JSON result
-         * [{"td":
-         *  {
-         *   "type":"uri",
-         *   "value":"https://raw.githubusercontent.com/Interactions-HSG/example-tds/was/tds/tractor1.ttl"
-         *  }
-         * }]
-         */
+        JsonObject firstBinding = farmBindings.get(0).getAsJsonObject();
 
-        // handles result as JSON object
-        JsonObject firstBinding = tdBindings.getAsJsonObject();
-        JsonObject tdBinding = firstBinding.getAsJsonObject(tdVariableName);
-        moistureLevelValue = tdBinding.getAsJsonPrimitive("value").getAsInt();
+        JsonObject tdBinding = firstBinding.getAsJsonObject("moisture");
+        final var tdValue = tdBinding.getAsJsonPrimitive("value").getAsString();
 
         // sets the value of interest to the OpFeedbackParam
-        level.set(moistureLevelValue);
+        final var value = Integer.parseInt(tdValue);
+
+        // sets the value of interest to the OpFeedbackParam
+        level.set(value);
     }
 
     private JsonArray executeQuery(String queryStr) {

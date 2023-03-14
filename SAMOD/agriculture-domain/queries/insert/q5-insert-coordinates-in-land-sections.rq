@@ -1,0 +1,65 @@
+PREFIX was: <https://was-course.interactions.ics.unisg.ch/farm-ontology#>
+PREFIX hmas: <https://purl.org/hmas/>
+PREFIX td: <https://www.w3.org/2019/wot/td#>
+PREFIX wotsec: <https://www.w3.org/2019/wot/security#>
+PREFIX htv: <http://www.w3.org/2011/http#>
+PREFIX hctl: <https://www.w3.org/2019/wot/hypermedia#>
+PREFIX js: <https://www.w3.org/2019/wot/json-schema#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+INSERT {
+    GRAPH <https://sandbox-graphdb.interactions.ics.unisg.ch/was-exercise-3-florence#>
+    {
+        <https://sandbox-graphdb.interactions.ics.unisg.ch/was-exercise-3-florence#LandSection-1> hmas:contains ?Coordinates1.
+        ?Coordinates1 a td:Thing, was:Coordinates;
+  			td:title "Coordinates1 of LandSection1";
+            td:hasCoordinates "0,0,1,1";
+.
+    }.
+} WHERE {
+
+
+  	BIND(IRI(CONCAT("https://sandbox-graphdb.interactions.ics.unisg.ch/was-exercise-3-florence#Coordinates-1")) AS ?Coordinates1)
+};
+
+INSERT {
+    GRAPH <https://sandbox-graphdb.interactions.ics.unisg.ch/was-exercise-3-florence#>
+    {
+        <https://sandbox-graphdb.interactions.ics.unisg.ch/was-exercise-3-florence#LandSection-2> hmas:contains ?Coordinates2.
+        ?Coordinates2 a td:Thing, was:Coordinates;
+  			td:title "Coordinates2 of LandSection2";
+            td:hasCoordinates "1,0,2,1";
+.
+    }.
+} WHERE {
+
+
+
+  	BIND(IRI(CONCAT("https://sandbox-graphdb.interactions.ics.unisg.ch/was-exercise-3-florence#Coordinates-2")) AS ?Coordinates2)
+};
+INSERT {
+    GRAPH <https://sandbox-graphdb.interactions.ics.unisg.ch/was-exercise-3-florence#>
+    {
+        <https://sandbox-graphdb.interactions.ics.unisg.ch/was-exercise-3-florence#LandSection-3> hmas:contains ?Coordinates3.
+        ?Coordinates3 a td:Thing, was:Coordinates;
+  			td:title "Coordinates3 of LandSection3";
+            td:hasCoordinates "0,1,1,2";
+.
+    }.
+} WHERE {
+
+  	BIND(IRI(CONCAT("https://sandbox-graphdb.interactions.ics.unisg.ch/was-exercise-3-florence#Coordinates-3")) AS ?Coordinates3)
+};
+INSERT {
+    GRAPH <https://sandbox-graphdb.interactions.ics.unisg.ch/was-exercise-3-florence#>
+    {
+        <https://sandbox-graphdb.interactions.ics.unisg.ch/was-exercise-3-florence#LandSection-4> hmas:contains ?Coordinates4.
+        ?Coordinates4 a td:Thing, was:Coordinates;
+  			td:title "Coordinates4 of LandSection4";
+            td:hasCoordinates "1,1,2,2";
+.
+    }.
+} WHERE {
+
+  	BIND(IRI(CONCAT("https://sandbox-graphdb.interactions.ics.unisg.ch/was-exercise-3-florence#Coordinates-4")) AS ?Coordinates4)
+};

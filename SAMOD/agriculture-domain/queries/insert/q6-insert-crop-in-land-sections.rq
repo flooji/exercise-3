@@ -1,0 +1,70 @@
+PREFIX was: <https://was-course.interactions.ics.unisg.ch/farm-ontology#>
+PREFIX hmas: <https://purl.org/hmas/>
+PREFIX td: <https://www.w3.org/2019/wot/td#>
+PREFIX wotsec: <https://www.w3.org/2019/wot/security#>
+PREFIX htv: <http://www.w3.org/2011/http#>
+PREFIX hctl: <https://www.w3.org/2019/wot/hypermedia#>
+PREFIX js: <https://www.w3.org/2019/wot/json-schema#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+INSERT {
+    GRAPH <https://sandbox-graphdb.interactions.ics.unisg.ch/was-exercise-3-florence#>
+    {
+        <https://sandbox-graphdb.interactions.ics.unisg.ch/was-exercise-3-florence#LandSection-1> hmas:contains ?CropA.
+        ?CropA a td:Thing, was:Crop.
+        ?CropA a td:Thing, was:Wheat;
+  			td:title "CropA grows in LandSection1";
+     		td:hasrequiredMoisture "120";
+
+
+.
+    }.
+} WHERE {
+
+  	BIND(IRI(CONCAT("https://sandbox-graphdb.interactions.ics.unisg.ch/was-exercise-3-florence#CropA")) AS ?CropA)
+};
+INSERT {
+    GRAPH <https://sandbox-graphdb.interactions.ics.unisg.ch/was-exercise-3-florence#>
+    {
+        <https://sandbox-graphdb.interactions.ics.unisg.ch/was-exercise-3-florence#LandSection-2> hmas:contains ?CropB.
+        ?CropB a td:Thing, was:Crop.
+               ?CropB a td:Thing, was:Wheat;
+  			td:title "CropB of LandSection2";
+     		td:hasrequiredMoisture "120";
+
+.
+    }.
+} WHERE {
+
+  	BIND(IRI(CONCAT("https://sandbox-graphdb.interactions.ics.unisg.ch/was-exercise-3-florence#CropB")) AS ?CropB)
+};
+INSERT {
+    GRAPH <https://sandbox-graphdb.interactions.ics.unisg.ch/was-exercise-3-florence#>
+    {
+         <https://sandbox-graphdb.interactions.ics.unisg.ch/was-exercise-3-florence#LandSection-3> hmas:contains ?CropC.
+        ?CropC a td:Thing, was:Crop.
+               ?CropC a td:Thing, was:Corn;
+  			td:title "CropC of LandSection3";
+     		td:hasrequiredMoisture "80";
+
+.
+    }.
+} WHERE {
+
+  	BIND(IRI(CONCAT("https://sandbox-graphdb.interactions.ics.unisg.ch/was-exercise-3-florence#CropC")) AS ?CropC)
+};
+INSERT {
+    GRAPH <https://sandbox-graphdb.interactions.ics.unisg.ch/was-exercise-3-florence#>
+    {
+        <https://sandbox-graphdb.interactions.ics.unisg.ch/was-exercise-3-florence#LandSection-4> hmas:contains ?CropD.
+        ?CropD a td:Thing, was:Crop.
+               ?CropD a td:Thing, was:Corn;
+  			td:title "CropD of LandSection4";
+     		td:hasrequiredMoisture "80";
+
+.
+    }.
+} WHERE {
+
+  	BIND(IRI(CONCAT("https://sandbox-graphdb.interactions.ics.unisg.ch/was-exercise-3-florence#CropD")) AS ?CropD)
+};
